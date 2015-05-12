@@ -1,4 +1,5 @@
 ( function ( mw, $ ) {
+	'use strict';
 
 	var cookieName = 'dismissSiteNotice',
 		siteNoticeId = mw.config.get( 'wgSiteNoticeId' );
@@ -7,7 +8,7 @@
 		return;
 	}
 
-	if ( $.cookie( cookieName ) === siteNoticeId ) {
+	if ( mw.cookie.get( cookieName ) === siteNoticeId ) {
 		mw.util.addCSS( '.mw-dismissable-notice { display: none; }' );
 		return;
 	}
@@ -19,10 +20,7 @@
 				.click( function ( e ) {
 					e.preventDefault();
 					$( this ).closest( '.mw-dismissable-notice' ).hide();
-					$.cookie( cookieName, siteNoticeId, {
-						expires: 30,
-						path: '/'
-					} );
+					mw.cookie.set( cookieName, siteNoticeId );
 				} );
 	} );
 

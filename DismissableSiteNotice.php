@@ -5,15 +5,15 @@
  *
  * @file
  * @ingroup Extensions
- * @version 1.1
+ * @version 1.1.2
  * @author Brion Vibber
  * @author Kevin Israel
- * @author Dror S.
+ * @author Dror S. [FFS]
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  * @link http://www.mediawiki.org/wiki/Extension:DismissableSiteNotice Documentation
  */
 
- # Not a valid entry point, skip unless MEDIAWIKI is defined
+// Not a valid entry point, skip unless MEDIAWIKI is defined
 if ( !defined( 'MEDIAWIKI' ) ) {
 	echo "This is a MediaWiki extension";
 	exit( 1 );
@@ -25,9 +25,9 @@ $wgExtensionCredits['other'][] = array(
 	'author' => array(
 		'Brion Vibber',
 		'Kevin Israel',
-		'Dror S.',
+		'Dror S. [FFS]',
 	),
-	'version' => '1.0.1',
+	'version' => '1.1.2',
 	'descriptionmsg' => 'sitenotice-desc',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:DismissableSiteNotice',
 );
@@ -41,7 +41,7 @@ $wgResourceModules['ext.dismissableSiteNotice'] = array(
 	'scripts' => 'ext.dismissableSiteNotice.js',
 	'styles' => 'ext.dismissableSiteNotice.css',
 	'dependencies' => array(
-		'jquery.cookie',
+		'mediawiki.cookie',
 		'mediawiki.util',
 	),
 	'targets' => array( 'desktop', 'mobile' ),
@@ -70,16 +70,12 @@ $wgHooks['SiteNoticeAfter'][] = function( &$notice, $skin ) {
 		$out->addModules( 'ext.dismissableSiteNotice' );
 		$out->addJsConfigVars( 'wgSiteNoticeId', "$major.$minor" );
 
-		$notice = Html::rawElement( 'div', array( 'class' => 'mw-dismissable-notice' ),
-			Html::rawElement( 'div', array( 'class' => 'mw-dismissable-notice-close' ),
-				$skin->msg( 'sitenotice_close-brackets' )
-				->rawParams(
-					Html::element( 'a', array( 'href' => '#' ), $skin->msg( 'sitenotice_close' )->text() )
-				)
-				->escaped()
-			) .
-			Html::rawElement( 'div', array( 'class' => 'mw-dismissable-notice-body' ), $notice )
-		);
+		$html = Html::openElement( 'div', array( 'class' => 'mw-dismissable-notice' ) );
+		$html .= makeCloseLink( $skin );
+		$html .= Html::rawElement( 'div', array( 'class' => 'mw-dismissable-notice-body' ), $notice );
+		$html .= Html::closeElement( 'div' );
+
+		$notice = $html;
 	}
 
 	if ( $skin->getUser()->isAnon() ) {
@@ -91,6 +87,41 @@ $wgHooks['SiteNoticeAfter'][] = function( &$notice, $skin ) {
 	return true;
 };
 
+function makeCloseLink( Skin $skin ) {
+	global $wgDismissableSiteNoticeCloseIcon, $wgExtensionAssetsPath;
+
+	$closeText = $skin->msg( 'sitenotice_close' )->text();
+
+	if ( $wgDismissableSiteNoticeCloseIcon === true ) {
+		$iconUrl = "{$wgExtensionAssetsPath}/DismissableSiteNotice/resources/closewindow.png";
+
+		$linkContent = Html::element(
+			'img',
+			array( 'src' => $iconUrl, 'alt' => $closeText )
+		);
+	} else {
+		$linkContent = $closeText;
+	}
+
+
+	$link = Html::rawElement( 'a', array( 'href' => '#', 'role' => 'button' ), $linkContent );
+
+	$out = Html::openElement( 'div', array( 'class' => 'mw-dismissable-notice-close' ) );
+	if ( $wgDismissableSiteNoticeCloseIcon !== true ) {
+		$link = $skin->msg( 'sitenotice_close-brackets' )
+		             ->rawParams(
+						$link
+		             )
+		             ->escaped();
+	}
+
+	$out .= $link;
+	$out .= Html::closeElement( 'div' );
+
+	return $out;
+}
+
 // Default settings
 $wgMajorSiteNoticeID = 1;
 $wgDismissableSiteNoticeForAnons = false;
+$wgDismissableSiteNoticeCloseIcon = false;
