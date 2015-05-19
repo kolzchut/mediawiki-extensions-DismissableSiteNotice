@@ -25,7 +25,7 @@ $wgExtensionCredits['other'][] = array(
 	'author' => array(
 		'Brion Vibber',
 		'Kevin Israel',
-		'Dror S. [FFS]',
+		'Dror S. [FFS] ([http://www.kolzchut.org.il Kol-Zchut])'
 	),
 	'version' => '1.1.2',
 	'descriptionmsg' => 'sitenotice-desc',
