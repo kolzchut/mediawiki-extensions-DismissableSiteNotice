@@ -1,9 +1,21 @@
+.client-js .mw-dismissable-notice {
+	display: none;
+}
+
 .mw-dismissable-notice-close {
 	visibility: hidden;
 }
 
-.mw-dismissable-notice-close {
+/* @noflip */ .sitedir-ltr .mw-dismissable-notice-close {
 	float: right;
+}
+
+/* @noflip */ .sitedir-rtl .mw-dismissable-notice-close {
+	float: left;
+}
+
+// WikiRights - diverging from upstream here:
+.mw-dismissable-notice-close {
 	margin-bottom: 10px;
 	margin-left: 10px;
 }
