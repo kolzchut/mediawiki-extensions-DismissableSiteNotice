@@ -42,7 +42,7 @@ class DismissableSiteNoticeHooks {
 		return true;
 	}
 
-	function makeCloseLink( Skin $skin ) {
+	static function makeCloseLink( Skin $skin ) {
 		global $wgDismissableSiteNoticeCloseIcon, $wgExtensionAssetsPath;
 
 		$closeText = $skin->msg( 'sitenotice_close' )->text();
